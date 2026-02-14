@@ -26,7 +26,7 @@ Install Night Runner for me: https://github.com/openonion/night-runner
 1. Clone to ~/night-runner
 2. Link skills to ~/.claude/skills/
 3. Check gh CLI is installed and authenticated
-4. Ask me configuration questions (repo, paths, label)
+4. Ask me configuration questions (repo, paths, settings)
 5. Create .env file
 6. Offer to create a test issue
 
@@ -91,10 +91,8 @@ If you prefer manual setup:
    # Path to local clone of the repo
    REPO_PATH="$HOME/path/to/your/repo"
 
-   # Label to filter issues (issues must have this label)
-   LABEL="auto"
-
    # Max issues to process per run
+   # Note: Processes ALL issues except those with "manual" label
    MAX_ISSUES=5
 
    # Worktree base directory (isolated workspaces per issue)
@@ -103,13 +101,14 @@ If you prefer manual setup:
 
 4. **Test on a single issue**
 
-   First, create a test issue in your repo and add the label (e.g., "auto"):
+   First, create a test issue in your repo:
    ```bash
    gh issue create --repo yourusername/yourrepo \
      --title "Test: Add hello world function" \
-     --label "auto" \
      --body "Create a simple hello world function in src/utils.py"
    ```
+
+   Note: Night Runner processes ALL issues by default. Add "manual" label to skip automation.
 
    Then run Night Runner on that issue:
    ```bash
@@ -182,13 +181,13 @@ Once you've tested manually, set up automatic scheduling:
 
 Let's walk through a complete example:
 
-**1. Create an issue with the automation label:**
+**1. Create an issue:**
 ```bash
 gh issue create --repo myorg/myrepo \
   --title "Add user authentication" \
-  --label "auto" \
   --body "Implement basic username/password authentication"
 ```
+Note: All issues are automated by default. To skip automation, add "manual" label.
 → Created issue #42
 
 **2. Run Night Runner to create a plan:**

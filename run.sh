@@ -708,9 +708,11 @@ cleanup_merged_worktrees
 # Fetch issues from GitHub
 # Either specific issue or all open issues (up to MAX_ISSUES)
 if [[ -n "$SPECIFIC_ISSUE" ]]; then
-    ISSUES=$(gh issue view "$SPECIFIC_ISSUE" -R "$REPO" --json number,title,body 2>/dev/null | jq -s '.')
+    ISSUES=$(gh issue view "$SPECIFIC_ISSUE" -R "$REPO" --json number,title,body,labels 2>/dev/null | jq -s '.')
 else
-    ISSUES=$(gh issue list -R "$REPO" --state open --limit "$MAX_ISSUES" --json number,title,body)
+    # Get all open issues, then filter out those with "manual" label
+    ALL_ISSUES=$(gh issue list -R "$REPO" --state open --limit "$MAX_ISSUES" --json number,title,body,labels)
+    ISSUES=$(echo "$ALL_ISSUES" | jq '[.[] | select(.labels | map(.name) | contains(["manual"]) | not)]')
 fi
 
 COUNT=$(echo "$ISSUES" | jq length)
