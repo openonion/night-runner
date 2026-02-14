@@ -48,8 +48,6 @@ Install and set this up for me. Ask questions to configure it.
 
 Claude Code will handle everything automatically. Setup takes ~5 minutes.
 
-See [INSTALL_PROMPT.md](./INSTALL_PROMPT.md) for the full copy-paste prompt.
-
 ---
 
 ### Manual Setup

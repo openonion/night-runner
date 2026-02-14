@@ -22,15 +22,32 @@ Now continue with the setup process below.
 
 If the user asks to "set up", "install", "configure", or "get started" with Night Runner:
 
-1. **Read SETUP_GUIDE.md** - This contains the complete interactive setup process
+1. **Show welcome message** - Use the greeting below
 2. **Follow the steps in order** - Guide user through each step
 3. **Ask questions interactively** - One at a time, with clear defaults
 4. **Validate as you go** - Check if tools exist, paths are valid, repos are accessible
 5. **Be encouraging** - Setup should feel easy and welcoming
 
+### Welcome Message
+
+```
+🧅 Welcome to Night Runner!
+
+I'll install and configure automated GitHub issue resolution for you in about 5 minutes.
+
+Night Runner will:
+✅ Read your GitHub issues (with a specific label)
+✅ Create implementation plans for your review
+✅ Implement approved plans automatically
+✅ Create PRs and handle review feedback
+✅ All while you sleep! 😴
+
+Let's get started! I'll clone the repository and set everything up...
+```
+
 ## Key Files
 
-- `SETUP_GUIDE.md` - Interactive setup instructions (READ THIS FIRST)
+- `README.md` - Main documentation with installation instructions
 - `.env.example` - Template configuration
 - `run.sh` - Main automation script
 - `manage.sh` - Installation and scheduling
