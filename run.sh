@@ -202,18 +202,18 @@ has_lgtm() {
 # Used to detect when user left comments on the plan asking for changes
 has_plan_feedback() {
     local issue_number="$1"
-    local plan_id=$(get_plan_comment_id "$issue_number")
 
-    if [[ -z "$plan_id" ]]; then
+    # Get timestamp of the LATEST Night Runner plan (not the first one)
+    local latest_plan_time=$(gh api "repos/$REPO/issues/$issue_number/comments" 2>/dev/null | \
+        jq -r '[.[] | select(.body | contains("NIGHT_RUNNER_PLAN"))] | last | .created_at')
+
+    if [[ -z "$latest_plan_time" || "$latest_plan_time" == "null" ]]; then
         return 1
     fi
 
-    # Get timestamp of plan comment
-    local plan_time=$(gh api "repos/$REPO/issues/comments/$plan_id" 2>/dev/null | jq -r '.created_at')
-
-    # Check if there are any comments after the plan (excluding LGTM and Night Runner plans)
+    # Check if there are user comments AFTER the latest plan (excluding LGTM)
     local feedback_count=$(gh api "repos/$REPO/issues/$issue_number/comments" 2>/dev/null | \
-        jq --arg plan_time "$plan_time" \
+        jq --arg plan_time "$latest_plan_time" \
         '[.[] | select(.created_at > $plan_time and (.body | contains("LGTM") | not) and (.body | contains("NIGHT_RUNNER_PLAN") | not))] | length')
 
     [[ "$feedback_count" -gt 0 ]]
