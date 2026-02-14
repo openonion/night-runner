@@ -1,21 +1,15 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/wu-changxing/openonion-assets/master/imgs/Onion.png" width="120" alt="OpenOnion Logo">
+<img src="https://raw.githubusercontent.com/wu-changxing/openonion-assets/master/imgs/Onion.png" width="140" alt="OpenOnion Logo">
 
 # Night Runner
 
-```
-   ____                   ____        _
-  / __ \____  ___  ____  / __ \____  (_)___  ____
- / / / / __ \/ _ \/ __ \/ / / / __ \/ / __ \/ __ \
-/ /_/ / /_/ /  __/ / / / /_/ / / / / / /_/ / / / /
-\____/ .___/\___/_/ /_/\____/_/ /_/_/\____/_/ /_/
-    /_/
-```
+### Auto-run Claude Code on GitHub issues overnight. Wake up to PRs.
 
-**Auto-run Claude Code on GitHub issues overnight. Wake up to PRs.**
+🧅 **OpenOnion = Open Source** • Built with [**ConnectOnion**](https://github.com/openonion/connectonion), the best and simplest AI agent framework
 
-> 🧅 **OpenOnion = Open Source** - Built with [ConnectOnion](https://github.com/openonion/connectonion), the best and simplest AI agent framework.
+[![GitHub](https://img.shields.io/badge/GitHub-openonion%2Fnight--runner-blue?logo=github)](https://github.com/openonion/night-runner)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
 
