@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/wu-changxing/openonion-assets/master/imgs/Onion.png" width="120" alt="OpenOnion Logo">
+
 # Night Runner
 
 ```
@@ -11,7 +15,9 @@
 
 **Auto-run Claude Code on GitHub issues overnight. Wake up to PRs.**
 
-> 🧅 **Open layers, open source** - Building transparent AI automation, one layer at a time.
+> 🧅 **OpenOnion = Open Source** - Built with [ConnectOnion](https://github.com/openonion/connectonion), the best and simplest AI agent framework.
+
+</div>
 
 ---
 
@@ -193,12 +199,12 @@ MIT
 
 <div align="center">
 
-**Built by [OpenOnion](https://github.com/openonion)**
+**Built by [OpenOnion](https://github.com/openonion) 🧅**
 
-🧅 *Peeling back complexity, one layer at a time*
+*Open Source • Open Community*
 
-[ConnectOnion](https://github.com/openonion/connectonion) • [Documentation](https://docs.connectonion.com) • [Discord](https://discord.gg/4xfD9k8AUF)
+Powered by [**ConnectOnion**](https://github.com/openonion/connectonion) - The best and simplest AI agent framework
 
-*Open source • Open layers • Open possibilities*
+[Documentation](https://docs.connectonion.com) • [Discord](https://discord.gg/4xfD9k8AUF)
 
 </div>
