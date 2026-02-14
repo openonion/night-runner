@@ -21,6 +21,101 @@
 
 ---
 
+## Getting Started
+
+### Prerequisites
+
+- [Claude Code](https://claude.ai/code) installed
+- [GitHub CLI (`gh`)](https://cli.github.com/) installed and authenticated
+- A GitHub repository you want to automate
+
+### Installation
+
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/openonion/night-runner.git
+   cd night-runner
+   ```
+
+2. **Link skills to Claude Code**
+
+   Skills must be in `~/.claude/skills/` to be accessible:
+   ```bash
+   # Create skills directory if it doesn't exist
+   mkdir -p ~/.claude/skills
+
+   # Create symlinks to make skills available globally
+   ln -s "$(pwd)/.claude/skills/night-runner-plan" ~/.claude/skills/
+   ln -s "$(pwd)/.claude/skills/night-runner-implement" ~/.claude/skills/
+   ln -s "$(pwd)/.claude/skills/night-runner-update-pr" ~/.claude/skills/
+   ```
+
+3. **Configure your repository**
+
+   Copy the example config and customize:
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` with your settings:
+   ```bash
+   # GitHub repo to process (owner/repo)
+   REPO="yourusername/yourrepo"
+
+   # Path to local clone of the repo
+   REPO_PATH="$HOME/path/to/your/repo"
+
+   # Label to filter issues (issues must have this label)
+   LABEL="auto"
+
+   # Max issues to process per run
+   MAX_ISSUES=5
+
+   # Worktree base directory (isolated workspaces per issue)
+   WORKTREE_BASE="$HOME/worktrees"
+   ```
+
+4. **Test on a single issue**
+
+   First, create a test issue in your repo and add the label (e.g., "auto"):
+   ```bash
+   gh issue create --repo yourusername/yourrepo \
+     --title "Test: Add hello world function" \
+     --label "auto" \
+     --body "Create a simple hello world function in src/utils.py"
+   ```
+
+   Then run Night Runner on that issue:
+   ```bash
+   ./run.sh --issue 123  # Replace 123 with your issue number
+   ```
+
+   This will:
+   - Create a plan as a comment on the issue
+   - Wait for you to review
+   - Reply `LGTM` to the plan comment to approve
+   - Run again: `./run.sh --issue 123`
+   - Night Runner will implement and create a PR
+
+### Full Automation (Optional)
+
+Once you've tested manually, set up automatic scheduling:
+
+**macOS (launchd):**
+```bash
+./manage.sh install   # Install and start
+./manage.sh status    # Check if running
+./manage.sh logs      # View logs
+```
+
+**Linux (cron):**
+```bash
+# Run every hour
+0 * * * * cd /path/to/night-runner && ./run.sh >> logs/cron.log 2>&1
+```
+
+---
+
 ## Workflow
 
 ```
@@ -56,6 +151,64 @@
 - Add comments if changes needed
 - Night Runner updates PR next run
 - Merge when ready
+
+## Example Walkthrough
+
+Let's walk through a complete example:
+
+**1. Create an issue with the automation label:**
+```bash
+gh issue create --repo myorg/myrepo \
+  --title "Add user authentication" \
+  --label "auto" \
+  --body "Implement basic username/password authentication"
+```
+→ Created issue #42
+
+**2. Run Night Runner to create a plan:**
+```bash
+./run.sh --issue 42
+```
+→ Night Runner posts a plan comment with:
+- Implementation approach
+- File changes needed
+- Architecture diagrams
+- "Reply with `LGTM` to approve"
+
+**3. Review and approve the plan:**
+Go to the issue, read the plan, and reply:
+```
+LGTM
+```
+
+**4. Run Night Runner to implement:**
+```bash
+./run.sh --issue 42
+```
+→ Night Runner:
+- Creates git worktree at `~/worktrees/myrepo-42`
+- Makes progressive commits
+- Creates PR #43 with link to issue #42
+- Preserves worktree for updates
+
+**5. Review the PR and request changes:**
+Add review comments on specific lines:
+```
+Please add error handling for invalid passwords
+```
+
+**6. Run Night Runner to update PR:**
+```bash
+./run.sh --issue 42
+```
+→ Night Runner:
+- Detects review comments
+- Continues in existing worktree
+- Makes new commits addressing feedback
+- Pushes to same PR #43
+
+**7. Merge when satisfied:**
+Merge PR #43 manually. Next run will auto-cleanup the worktree.
 
 ## Setup
 
