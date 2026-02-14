@@ -1,0 +1,11 @@
+# Local config (contains paths)
+.env
+
+# Generated plist (from template)
+com.openonion.night-runner.plist
+
+# Logs
+logs/
+
+# Temp files
+*.tmp
