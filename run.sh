@@ -486,10 +486,22 @@ cleanup_worktree() {
 # On success: Issue moves to WAITING_APPROVAL state
 stage_plan() {
     local issue_number="$1"
+    local issue_title="$2"
 
     log "  Creating plan..."
 
-    local plan=$(run_claude "$REPO_PATH" "/night-runner-plan $issue_number")
+    # Pass issue number, title, and URL to help Claude focus on the correct issue
+    local issue_url="https://github.com/$REPO/issues/$issue_number"
+    local plan=$(run_claude "$REPO_PATH" "/night-runner-plan $issue_number" <<EOF
+Create an implementation plan for this specific issue:
+
+Issue #$issue_number: "$issue_title"
+URL: $issue_url
+
+Use the /night-runner-plan skill to create the plan.
+Focus ONLY on this specific issue, not any other issues.
+EOF
+)
 
     if [[ -z "$plan" ]]; then
         log "  Failed to generate plan"
@@ -765,12 +777,12 @@ echo "$ISSUES" | jq -c '.[]' | while read -r issue; do
     elif has_plan "$NUMBER"; then
         if has_plan_feedback "$NUMBER"; then
             log "  Plan has feedback, updating plan..."
-            stage_plan "$NUMBER"
+            stage_plan "$NUMBER" "$TITLE"
         else
             log "  Plan exists, waiting for LGTM"
         fi
     else
-        stage_plan "$NUMBER"
+        stage_plan "$NUMBER" "$TITLE"
     fi
 done
 
