@@ -302,34 +302,43 @@ cleanup_merged_worktrees() {
 post_plan() {
     local issue_number="$1"
     local plan="$2"
+    local issue_title="$3"  # Optional, will fetch if not provided
 
-    local body="## 🤖 Night Runner - Implementation Plan
+    # Get issue title if not provided
+    if [[ -z "$issue_title" ]]; then
+        issue_title=$(gh issue view "$issue_number" -R "$REPO" --json title -q '.title' 2>/dev/null || echo "Issue #$issue_number")
+    fi
 
-$plan
+    # Strip any preamble from Claude's output (e.g., "Perfect! Now I have enough context...")
+    # Keep only content starting from first ## heading
+    plan=$(echo "$plan" | sed -n '/^##/,$p')
+
+    # Build consistent header
+    local header="## 🤖 Night Runner - Implementation Plan
+
+**Issue #$issue_number:** $issue_title
+
+---
+"
+
+    local footer="
 
 ---
 *Reply with \`LGTM\` to approve this plan and create a PR.*
 
 <!-- NIGHT_RUNNER_PLAN -->"
 
+    local body="${header}${plan}${footer}"
+
     # Check if plan comment already exists
     local existing_comment_id=$(get_plan_comment_id "$issue_number")
 
     if [[ -n "$existing_comment_id" ]]; then
-        # Reply to existing plan comment
+        # Update existing plan (post as new comment, not reply)
         log "  Updating existing plan (comment #$existing_comment_id)..."
 
-        local reply="## 🔄 Updated Plan
-
-$plan
-
----
-*This is an updated version of the plan. Reply with \`LGTM\` to approve.*"
-
-        gh api "repos/$REPO/issues/comments/$existing_comment_id/replies" \
-            -X POST \
-            -f body="$reply" 2>/dev/null || \
-        gh issue comment "$issue_number" -R "$REPO" --body "$reply"
+        # Use same format for updates
+        gh issue comment "$issue_number" -R "$REPO" --body "$body"
     else
         # Create new plan comment
         gh issue comment "$issue_number" -R "$REPO" --body "$body"
@@ -508,7 +517,7 @@ EOF
         return 1
     fi
 
-    post_plan "$issue_number" "$plan"
+    post_plan "$issue_number" "$plan" "$issue_title"
     log "  Plan posted"
 }
 
