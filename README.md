@@ -23,13 +23,44 @@
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start (Recommended) 🚀
+
+**The easiest way to get started:**
+
+1. Clone this repo and open in Claude Code:
+   ```bash
+   git clone https://github.com/openonion/night-runner.git
+   cd night-runner
+   code .  # or open in Claude Code
+   ```
+
+2. In Claude Code, simply ask:
+   ```
+   Help me set up Night Runner
+   ```
+
+3. Claude will guide you through:
+   - Checking prerequisites
+   - Linking skills
+   - Configuring .env interactively
+   - Creating and running a test issue
+   - Setting up automation (optional)
+
+That's it! Claude Code reads `SETUP_GUIDE.md` and walks you through everything.
+
+---
+
+### Manual Setup
+
+If you prefer manual setup:
+
+#### Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
 - [GitHub CLI (`gh`)](https://cli.github.com/) installed and authenticated
 - A GitHub repository you want to automate
 
-### Installation
+#### Installation
 
 1. **Clone this repository**
    ```bash
