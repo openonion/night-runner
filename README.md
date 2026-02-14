@@ -241,34 +241,7 @@ Please add error handling for invalid passwords
 **7. Merge when satisfied:**
 Merge PR #43 manually. Next run will auto-cleanup the worktree.
 
-## Setup
-
-```bash
-# 1. Clone
-git clone https://github.com/openonion/night-runner
-cd night-runner
-
-# 2. Configure
-cp .env.example .env
-# Edit .env with your repo path
-
-# 3. Test
-./manage.sh run        # Dry run
-./manage.sh run-one    # Process one issue
-
-# 4. Install (runs hourly 8 PM - 10 AM)
-./manage.sh install
-```
-
-## Configuration
-
-Edit `.env`:
-
-```bash
-REPO="your-org/your-repo"
-REPO_PATH="$HOME/path/to/local/clone"
-MAX_ISSUES=10
-```
+---
 
 ## Commands
 
@@ -292,57 +265,9 @@ MAX_ISSUES=10
 | PR exists | `gh pr list --search "fixes #N"` |
 | PR needs update | PR has review comments |
 
-## Example
-
-**1. You create an issue:**
-```
-Title: Add dark mode support
-Body: Users should be able to toggle dark mode...
-```
-
-**2. Night Runner comments (overnight):**
-```markdown
-## 🤖 Night Runner - Implementation Plan
-
-### Summary
-Add dark mode toggle to the application.
-
-### Files to change
-- src/styles/theme.css
-- src/components/ThemeToggle.tsx
-- src/hooks/useTheme.ts
-
-### Approach
-1. Create CSS variables for colors
-2. Add ThemeToggle component
-3. Persist preference in localStorage
-
 ---
-*Reply with `LGTM` to approve this plan and create a PR.*
-```
 
-**3. You reply:**
-```
-LGTM
-```
-
-**4. Night Runner creates PR (next run):**
-```
-PR #42: fix: Add dark mode support
-- Creates draft PR
-- Links "Fixes #41"
-```
-
-**5. You review, merge, done!**
-
-## Requirements
-
-- **macOS** (uses launchd for scheduling)
-- **gh CLI** (`brew install gh && gh auth login`)
-- **Claude CLI** (with active subscription)
-- **Git** (local clone of your repo)
-
-## Files
+## Project Structure
 
 ```
 night-runner/
