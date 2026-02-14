@@ -51,11 +51,50 @@ DO NOT guess file contents. DO NOT assume code structure. READ FIRST.
 
 ## Step 3: Create Plan with Visual Diagrams
 
+**CRITICAL: Plans should be 80% diagrams, 20% text!**
+
+Use diagrams to explain everything:
+- Current state vs Proposed state
+- Before/After comparisons
+- Lifecycle changes
+- File relationships
+- Data flow
+
+Keep text minimal - let diagrams tell the story.
+
 Your plan MUST include:
 
-### 1. Workflow Diagram
+### 1. Current vs Proposed (REQUIRED)
 
-Use ASCII art to show the lifecycle/flow:
+Show the before/after state visually:
+
+```
+Example:
+
+CURRENT (Problem):
+┌─────────────┐
+│    User     │
+└──────┬──────┘
+       │ manually runs deploy
+       ▼
+┌─────────────┐     ┌──────────────┐
+│ co deploy   │────▶│ config.toml  │ ❌ Separate config
+└─────────────┘     └──────────────┘
+
+PROPOSED (Solution):
+┌─────────────┐
+│    User     │
+└──────┬──────┘
+       │ co deploy (reads host.yaml)
+       ▼
+┌─────────────┐     ┌──────────────┐
+│ co deploy   │────▶│ host.yaml    │ ✅ Single source of truth
+└─────────────┘     └──────────────┘
+```
+
+### 2. Lifecycle/Workflow Diagram
+
+Show the complete flow with changes highlighted:
 
 ```
 Example for adding a feature:
@@ -187,12 +226,21 @@ Return response
 
 ## Guidelines
 
-- Use diagrams for EVERY plan
+**Diagram Requirements:**
+- ALWAYS start with Current vs Proposed comparison
+- Use diagrams for EVERY concept
+- Show lifecycle changes visually
+- Use before/after comparisons
 - Keep diagrams simple but informative
+- Minimize text - let visuals explain
+
+**Code Requirements:**
 - Read actual code before planning
 - Be specific about files and functions
 - Don't over-engineer
 - Focus on minimal change
+
+**Remember: If you can draw it, don't write it!**
 
 ## Output
 
