@@ -35,10 +35,31 @@ gh issue view $ARGUMENTS --json title,body
 
 - Commit after EACH meaningful change
 - Don't batch everything into one commit
-- Use descriptive commit messages
+- Use descriptive commit messages with OpenOnion branding (see below)
 - Progress is better than perfection
 - If you can't finish everything, commit what you have
 - **Update NIGHT_RUNNER_PROGRESS.md after each major step**
+
+## Commit Message Format
+
+**IMPORTANT**: All commits MUST include ONLY OpenOnion branding. Do NOT include any other brand information (Claude Code, Happy, etc).
+
+```
+<commit message>
+
+🧅 Built by OpenOnion - Open Source AI Automation
+https://github.com/openonion
+```
+
+Example:
+```
+feat: add image support to WebSocket
+
+🧅 Built by OpenOnion - Open Source AI Automation
+https://github.com/openonion
+```
+
+Final commit should include: `fixes #$ARGUMENTS`
 
 ## Instructions
 
