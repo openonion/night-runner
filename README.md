@@ -9,6 +9,7 @@
 🧅 **OpenOnion = Open Source** • Built with [**ConnectOnion**](https://github.com/openonion/connectonion), the best and simplest AI agent framework
 
 [![GitHub](https://img.shields.io/badge/GitHub-openonion%2Fnight--runner-blue?logo=github)](https://github.com/openonion/night-runner)
+[![X Follow](https://img.shields.io/badge/Follow-@ConnectOnionAI-black?logo=x)](https://x.com/ConnectOnionAI)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
@@ -308,6 +309,6 @@ MIT
 
 Powered by [**ConnectOnion**](https://github.com/openonion/connectonion) - The best and simplest AI agent framework
 
-[Documentation](https://docs.connectonion.com) • [Discord](https://discord.gg/4xfD9k8AUF)
+[Documentation](https://docs.connectonion.com) • [Discord](https://discord.gg/4xfD9k8AUF) • [X @ConnectOnionAI](https://x.com/ConnectOnionAI)
 
 </div>
