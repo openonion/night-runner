@@ -211,10 +211,10 @@ has_plan_feedback() {
     # Get timestamp of plan comment
     local plan_time=$(gh api "repos/$REPO/issues/comments/$plan_id" 2>/dev/null | jq -r '.created_at')
 
-    # Check if there are any comments after the plan (excluding LGTM)
+    # Check if there are any comments after the plan (excluding LGTM and Night Runner plans)
     local feedback_count=$(gh api "repos/$REPO/issues/$issue_number/comments" 2>/dev/null | \
         jq --arg plan_time "$plan_time" \
-        '[.[] | select(.created_at > $plan_time and (.body | contains("LGTM") | not))] | length')
+        '[.[] | select(.created_at > $plan_time and (.body | contains("LGTM") | not) and (.body | contains("NIGHT_RUNNER_PLAN") | not))] | length')
 
     [[ "$feedback_count" -gt 0 ]]
 }
