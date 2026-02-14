@@ -722,9 +722,14 @@ cleanup_merged_worktrees
 if [[ -n "$SPECIFIC_ISSUE" ]]; then
     ISSUES=$(gh issue view "$SPECIFIC_ISSUE" -R "$REPO" --json number,title,body,labels 2>/dev/null | jq -s '.')
 else
-    # Get all open issues, then filter out those with "manual" label
-    ALL_ISSUES=$(gh issue list -R "$REPO" --state open --limit "$MAX_ISSUES" --json number,title,body,labels)
+    # Get ALL open issues (no limit), then filter out those with "manual" label
+    ALL_ISSUES=$(gh issue list -R "$REPO" --state open --limit 100 --json number,title,body,labels)
     ISSUES=$(echo "$ALL_ISSUES" | jq '[.[] | select(.labels | map(.name) | contains(["manual"]) | not)]')
+
+    # Apply MAX_ISSUES limit after filtering
+    if [[ -n "$MAX_ISSUES" && "$MAX_ISSUES" -gt 0 ]]; then
+        ISSUES=$(echo "$ISSUES" | jq ".[:$MAX_ISSUES]")
+    fi
 fi
 
 COUNT=$(echo "$ISSUES" | jq length)
