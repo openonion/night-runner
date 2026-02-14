@@ -1,6 +1,19 @@
 # Night Runner
 
-Auto-run Claude Code on GitHub issues overnight. Wake up to PRs.
+```
+   ____                   ____        _
+  / __ \____  ___  ____  / __ \____  (_)___  ____
+ / / / / __ \/ _ \/ __ \/ / / / __ \/ / __ \/ __ \
+/ /_/ / /_/ /  __/ / / / /_/ / / / / / /_/ / / / /
+\____/ .___/\___/_/ /_/\____/_/ /_/_/\____/_/ /_/
+    /_/
+```
+
+**Auto-run Claude Code on GitHub issues overnight. Wake up to PRs.**
+
+> 🧅 **Open layers, open source** - Building transparent AI automation, one layer at a time.
+
+---
 
 ## Workflow
 
@@ -175,3 +188,17 @@ claude -p "/night-runner-plan 123"
 ## License
 
 MIT
+
+---
+
+<div align="center">
+
+**Built by [OpenOnion](https://github.com/openonion)**
+
+🧅 *Peeling back complexity, one layer at a time*
+
+[ConnectOnion](https://github.com/openonion/connectonion) • [Documentation](https://docs.connectonion.com) • [Discord](https://discord.gg/4xfD9k8AUF)
+
+*Open source • Open layers • Open possibilities*
+
+</div>
