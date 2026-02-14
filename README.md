@@ -21,32 +21,34 @@
 
 ---
 
-## Getting Started
+## 🚀 Installation (Copy & Paste)
 
-### Quick Start (Recommended) 🚀
+**Easiest way - Just copy this into Claude Code:**
 
-**The easiest way to get started:**
+```
+Install Night Runner for me: https://github.com/openonion/night-runner
 
-1. Clone this repo and open in Claude Code:
-   ```bash
-   git clone https://github.com/openonion/night-runner.git
-   cd night-runner
-   code .  # or open in Claude Code
-   ```
+1. Clone to ~/night-runner
+2. Link skills to ~/.claude/skills/
+3. Check gh CLI is installed and authenticated
+4. Ask me configuration questions (repo, paths, label)
+5. Create .env file
+6. Offer to create a test issue
 
-2. In Claude Code, simply ask:
-   ```
-   Help me set up Night Runner
-   ```
+Guide me through the setup interactively!
+```
 
-3. Claude will guide you through:
-   - Checking prerequisites
-   - Linking skills
-   - Configuring .env interactively
-   - Creating and running a test issue
-   - Setting up automation (optional)
+**Or even simpler - just paste the URL:**
 
-That's it! Claude Code reads `SETUP_GUIDE.md` and walks you through everything.
+```
+https://github.com/openonion/night-runner
+
+Install and set this up for me. Ask questions to configure it.
+```
+
+Claude Code will handle everything automatically. Setup takes ~5 minutes.
+
+See [INSTALL_PROMPT.md](./INSTALL_PROMPT.md) for the full copy-paste prompt.
 
 ---
 

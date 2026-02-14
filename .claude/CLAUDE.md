@@ -1,5 +1,23 @@
 # Night Runner - Claude Code Instructions
 
+## When User Pastes GitHub URL or Install Prompt
+
+If the user pastes:
+- `https://github.com/openonion/night-runner`
+- Or the install prompt from INSTALL_PROMPT.md
+- Or asks to "install Night Runner"
+
+Then follow these steps:
+
+### Step 0: Clone the Repository (if not already done)
+
+```bash
+git clone https://github.com/openonion/night-runner.git ~/night-runner
+cd ~/night-runner
+```
+
+Now continue with the setup process below.
+
 ## When User Wants to Set Up Night Runner
 
 If the user asks to "set up", "install", "configure", or "get started" with Night Runner:

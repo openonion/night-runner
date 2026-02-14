@@ -6,12 +6,12 @@ This guide helps you set up Night Runner for the first time. Claude Code will wa
 
 ## Welcome Message (Show this first)
 
-When user says "Help me set up Night Runner" or similar, greet them with:
+When user pastes the install prompt or asks to set up Night Runner, greet them with:
 
 ```
 🧅 Welcome to Night Runner!
 
-I'll help you set up automated GitHub issue resolution in about 5 minutes.
+I'll install and configure automated GitHub issue resolution for you in about 5 minutes.
 
 Night Runner will:
 ✅ Read your GitHub issues (with a specific label)
@@ -20,7 +20,7 @@ Night Runner will:
 ✅ Create PRs and handle review feedback
 ✅ All while you sleep! 😴
 
-Let's get started! First, let me check your prerequisites...
+Let's get started! I'll clone the repository and set everything up...
 ```
 
 ---
