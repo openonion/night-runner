@@ -164,6 +164,29 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ============================================================================
+# Lock File - Prevent Concurrent Runs
+# ============================================================================
+LOCK_FILE="$SCRIPT_DIR/.night-runner.lock"
+
+# Check if another instance is running
+if [ -f "$LOCK_FILE" ]; then
+    LOCK_PID=$(cat "$LOCK_FILE")
+    if ps -p "$LOCK_PID" > /dev/null 2>&1; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Another Night Runner instance (PID $LOCK_PID) is already running. Exiting."
+        exit 0
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Stale lock file found (PID $LOCK_PID no longer running). Removing."
+        rm -f "$LOCK_FILE"
+    fi
+fi
+
+# Create lock file with current PID
+echo $$ > "$LOCK_FILE"
+
+# Remove lock file on exit
+trap "rm -f '$LOCK_FILE'" EXIT
+
+# ============================================================================
 # Helper Functions - State Detection
 # ============================================================================
 # These functions determine what stage an issue is in by querying GitHub API
