@@ -504,6 +504,9 @@ stage_plan() {
     local issue_number="$1"
     local issue_title="$2"
 
+    # React to issue to show Night Runner is working on it (👀)
+    gh api -X POST "repos/$REPO/issues/$issue_number/reactions" -f content="eyes" 2>/dev/null || true
+
     log "  Creating plan..."
 
     # Pass issue number, title, and URL to help Claude focus on the correct issue
