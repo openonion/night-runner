@@ -9,3 +9,4 @@ logs/
 
 # Temp files
 *.tmp
+.issue-locks/

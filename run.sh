@@ -164,27 +164,57 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ============================================================================
-# Lock File - Prevent Concurrent Runs
+# Issue Locking - Prevent Concurrent Work on Same Issue
 # ============================================================================
-LOCK_FILE="$SCRIPT_DIR/.night-runner.lock"
+LOCK_DIR="$SCRIPT_DIR/.issue-locks"
+mkdir -p "$LOCK_DIR"
 
-# Check if another instance is running
-if [ -f "$LOCK_FILE" ]; then
-    LOCK_PID=$(cat "$LOCK_FILE")
-    if ps -p "$LOCK_PID" > /dev/null 2>&1; then
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Another Night Runner instance (PID $LOCK_PID) is already running. Exiting."
-        exit 0
-    else
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Stale lock file found (PID $LOCK_PID no longer running). Removing."
-        rm -f "$LOCK_FILE"
+# Lock an issue before processing
+# Returns 0 if lock acquired, 1 if issue is locked by another process
+lock_issue() {
+    local repo="$1"
+    local issue_number="$2"
+    local lock_file="$LOCK_DIR/${repo//\//-}-${issue_number}.lock"
+
+    # Check if locked by another process
+    if [ -f "$lock_file" ]; then
+        local lock_pid=$(cat "$lock_file")
+        if ps -p "$lock_pid" > /dev/null 2>&1; then
+            return 1  # Locked by running process
+        else
+            # Stale lock, remove it
+            rm -f "$lock_file"
+        fi
     fi
-fi
 
-# Create lock file with current PID
-echo $$ > "$LOCK_FILE"
+    # Acquire lock
+    echo $$ > "$lock_file"
+    return 0
+}
 
-# Remove lock file on exit
-trap "rm -f '$LOCK_FILE'" EXIT
+# Unlock an issue after processing
+unlock_issue() {
+    local repo="$1"
+    local issue_number="$2"
+    local lock_file="$LOCK_DIR/${repo//\//-}-${issue_number}.lock"
+
+    # Only remove if we own the lock
+    if [ -f "$lock_file" ] && [ "$(cat "$lock_file")" = "$$" ]; then
+        rm -f "$lock_file"
+    fi
+}
+
+# Cleanup all locks owned by this process on exit
+cleanup_locks() {
+    for lock_file in "$LOCK_DIR"/*; do
+        [ -f "$lock_file" ] || continue
+        if [ "$(cat "$lock_file" 2>/dev/null)" = "$$" ]; then
+            rm -f "$lock_file"
+        fi
+    done
+}
+
+trap cleanup_locks EXIT
 
 # ============================================================================
 # Helper Functions - State Detection
@@ -789,7 +819,14 @@ echo "$ISSUES" | jq -c '.[]' | while read -r issue; do
 
     log "Issue #$NUMBER: $TITLE"
 
+    # Try to acquire lock on this issue
+    if ! lock_issue "$REPO" "$NUMBER"; then
+        log "  Locked by another process, skipping"
+        continue
+    fi
+
     if $DRY_RUN; then
+        unlock_issue "$REPO" "$NUMBER"
         if has_pr "$NUMBER"; then
             log "  [DRY RUN] Has PR - would check for updates"
         elif has_lgtm "$NUMBER"; then
@@ -831,6 +868,9 @@ echo "$ISSUES" | jq -c '.[]' | while read -r issue; do
     else
         stage_plan "$NUMBER" "$TITLE"
     fi
+
+    # Release lock after processing
+    unlock_issue "$REPO" "$NUMBER"
 done
 }
 
