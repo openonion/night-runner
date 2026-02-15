@@ -313,6 +313,13 @@ post_plan() {
     # Keep only content starting from first ## heading
     plan=$(echo "$plan" | sed -n '/^##/,$p')
 
+    # Validate plan is not empty
+    if [[ -z "$plan" || $(echo "$plan" | tr -d '[:space:]') == "" ]]; then
+        log "  ERROR: Plan is empty after stripping preamble"
+        log "  This usually means Claude only output preamble text without actual plan content"
+        return 1
+    fi
+
     # Build consistent header
     local header="## 🤖 Night Runner - Implementation Plan
 
