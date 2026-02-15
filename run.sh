@@ -697,7 +697,7 @@ stage_update_pr() {
 }
 
 # ============================================================================
-# Main Loop - Process All Issues
+# Process Repository - Main Logic for a Single Repo
 # ============================================================================
 #
 # For each issue, determines current state and takes appropriate action:
@@ -720,7 +720,7 @@ stage_update_pr() {
 #
 # This creates a state machine where each issue progresses through stages.
 
-log "===== Night Runner Start ====="
+process_repo() {
 log "Repo: $REPO"
 
 # Cleanup worktrees for merged PRs first
@@ -799,5 +799,51 @@ echo "$ISSUES" | jq -c '.[]' | while read -r issue; do
         stage_plan "$NUMBER" "$TITLE"
     fi
 done
+}
 
+# ============================================================================
+# Main Entry Point - Multi-Repo Support
+# ============================================================================
+
+log "===== Night Runner Start ====="
+
+# Support multiple repos from REPO_LIST
+if [[ -n "$REPO_LIST" ]]; then
+    # Parse REPO_LIST (format: "repo|path" one per line)
+    REPO_COUNT=0
+    while IFS='|' read -r repo path; do
+        # Skip empty lines and comments
+        [[ -z "$repo" || "$repo" =~ ^[[:space:]]*# ]] && continue
+
+        # Expand variables like $HOME
+        path=$(eval echo "$path")
+
+        REPO_COUNT=$((REPO_COUNT + 1))
+    done <<< "$REPO_LIST"
+
+    log "Processing $REPO_COUNT repositories"
+
+    CURRENT=0
+    while IFS='|' read -r repo path; do
+        # Skip empty lines and comments
+        [[ -z "$repo" || "$repo" =~ ^[[:space:]]*# ]] && continue
+
+        CURRENT=$((CURRENT + 1))
+
+        # Expand variables like $HOME
+        path=$(eval echo "$path")
+
+        REPO="$repo"
+        REPO_PATH="$path"
+
+        log ""
+        log "===== Repository $CURRENT/$REPO_COUNT ====="
+        process_repo
+    done <<< "$REPO_LIST"
+else
+    # Single repo (backward compatible)
+    process_repo
+fi
+
+log ""
 log "===== Night Runner Done ====="
