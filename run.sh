@@ -101,9 +101,11 @@
 # ============================================================================
 # USAGE
 # ============================================================================
-#   ./run.sh                    # Process all open issues
-#   ./run.sh --dry-run          # Preview only (no Claude invocation)
-#   ./run.sh --issue 123        # Process specific issue #123
+#   ./run.sh                              # Process all repos and issues
+#   ./run.sh --dry-run                    # Preview only (no Claude invocation)
+#   ./run.sh --issue 123                  # Process specific issue #123
+#   ./run.sh --repo openonion/oo-api      # Process specific repo only
+#   ./run.sh --repo openonion/oo-api --issue 3  # Process issue #3 in oo-api
 #
 # ============================================================================
 # ENVIRONMENT
@@ -154,11 +156,13 @@ log() {
 # Parse arguments
 DRY_RUN=false
 SPECIFIC_ISSUE=""
+SPECIFIC_REPO=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --dry-run) DRY_RUN=true; shift ;;
         --issue) SPECIFIC_ISSUE="$2"; shift 2 ;;
+        --repo) SPECIFIC_REPO="$2"; shift 2 ;;
         *) shift ;;
     esac
 done
@@ -879,6 +883,32 @@ done
 # ============================================================================
 
 log "===== Night Runner Start ====="
+
+# Handle --repo flag (process specific repo only)
+if [[ -n "$SPECIFIC_REPO" ]]; then
+    # Find repo in REPO_LIST
+    FOUND=false
+    while IFS='|' read -r repo path; do
+        [[ -z "$repo" || "$repo" =~ ^[[:space:]]*# ]] && continue
+        if [[ "$repo" == "$SPECIFIC_REPO" ]]; then
+            REPO="$repo"
+            REPO_PATH=$(eval echo "$path")
+            FOUND=true
+            break
+        fi
+    done <<< "$REPO_LIST"
+
+    if ! $FOUND; then
+        log "ERROR: Repo '$SPECIFIC_REPO' not found in REPO_LIST"
+        exit 1
+    fi
+
+    log "Processing specific repo: $REPO"
+    process_repo
+    log ""
+    log "===== Night Runner Done ====="
+    exit 0
+fi
 
 # Support multiple repos from REPO_LIST
 if [[ -n "$REPO_LIST" ]]; then
