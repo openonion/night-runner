@@ -153,7 +153,7 @@ case "$1" in
         echo ""
         echo "✓ Night Runner installed"
         echo ""
-        echo "Schedule: Every hour from 8 PM to 10 AM"
+        echo "Schedule: Every hour, 24/7"
         echo ""
         echo "Commands:"
         echo "  ./manage.sh status     # Check status"
@@ -180,7 +180,7 @@ case "$1" in
 
         if launchctl list | grep -q "$PLIST_NAME"; then
             echo "Status: ✓ Installed"
-            echo "Schedule: Every hour from 8 PM to 10 AM"
+            echo "Schedule: Every hour, 24/7"
             launchctl list | grep "$PLIST_NAME"
         else
             echo "Status: ✗ Not installed"
