@@ -505,14 +505,18 @@ setup_worktree() {
     cd "$REPO_PATH"
     git fetch origin >/dev/null 2>&1
 
-    # Check if branch exists on remote (indicates previous work)
+    # Check if branch exists (remote or local)
     if git ls-remote --heads origin "$branch" | grep -q "$branch"; then
-        # Continue from existing branch (PR updates or retry after timeout)
+        # Branch exists on remote - use it
         git worktree add "$worktree" "$branch" >/dev/null 2>&1 || \
             git worktree add "$worktree" -b "$branch" "origin/$branch" >/dev/null 2>&1 || return 1
         log "  Continuing from existing branch" >&2
+    elif git show-ref --verify --quiet "refs/heads/$branch"; then
+        # Branch exists locally but not on remote - use local branch
+        git worktree add "$worktree" "$branch" >/dev/null 2>&1 || return 1
+        log "  Continuing from local branch" >&2
     else
-        # Create new branch from main (first time working on this issue)
+        # No branch exists - create new one from main
         git worktree add "$worktree" -b "$branch" origin/main >/dev/null 2>&1 || return 1
         log "  Created new branch" >&2
     fi
