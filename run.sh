@@ -390,6 +390,8 @@ post_plan() {
 ---
 *Reply with \`LGTM\` to approve this plan and create a PR.*
 
+🤖 *Automated by [Night Runner](https://github.com/openonion/night-runner) - OpenOnion's 24/7 code worker*
+
 <!-- NIGHT_RUNNER_PLAN -->"
 
     local body="${header}${plan}${footer}"
