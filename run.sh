@@ -153,6 +153,48 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
+# ============================================================================
+# Version & Auto-Update
+# ============================================================================
+VERSION=$(cat "$SCRIPT_DIR/VERSION" 2>/dev/null || echo "unknown")
+
+# Check for updates (once per day)
+check_for_updates() {
+    local last_check_file="$SCRIPT_DIR/.last-update-check"
+    local now=$(date +%s)
+
+    # Check if we checked in last 24 hours
+    if [[ -f "$last_check_file" ]]; then
+        local last_check=$(cat "$last_check_file")
+        local diff=$((now - last_check))
+        if [[ $diff -lt 86400 ]]; then
+            return 0  # Skip check
+        fi
+    fi
+
+    # Check remote version
+    cd "$SCRIPT_DIR"
+    git fetch origin main --quiet 2>/dev/null || return 0
+
+    local remote_version=$(git show origin/main:VERSION 2>/dev/null || echo "unknown")
+
+    if [[ "$remote_version" != "$VERSION" && "$remote_version" != "unknown" ]]; then
+        log "🔄 New version available: $remote_version (current: $VERSION)"
+        log "   Updating Night Runner..."
+
+        # Pull latest
+        git pull origin main --quiet 2>/dev/null && \
+        log "   ✅ Updated to v$remote_version" || \
+        log "   ❌ Update failed, continuing with v$VERSION"
+    fi
+
+    # Update last check time
+    echo "$now" > "$last_check_file"
+}
+
+# Run update check (silent, non-blocking)
+check_for_updates 2>/dev/null || true
+
 # Parse arguments
 DRY_RUN=false
 SPECIFIC_ISSUE=""
@@ -888,7 +930,7 @@ done
 # Main Entry Point - Multi-Repo Support
 # ============================================================================
 
-log "===== Night Runner Start ====="
+log "===== Night Runner v$VERSION Start ====="
 
 # Handle --repo flag (process specific repo only)
 if [[ -n "$SPECIFIC_REPO" ]]; then
