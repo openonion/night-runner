@@ -24,6 +24,8 @@ If the file exists:
 - Update the "Completed Tasks" section as you make progress
 - Don't redo completed work
 
+**⚠️ CRITICAL**: NIGHT_RUNNER_PROGRESS.md is already in .gitignore and should NEVER be committed to git! It's for internal tracking only.
+
 ## Step 2: Get Issue Details
 
 Get issue details:
