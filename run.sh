@@ -320,10 +320,10 @@ has_plan_feedback() {
 
 # Check if PR exists for issue
 # Returns: 0 if PR exists, 1 if not
-# Detection: Searches for PR with "fixes #123" in body
+# Detection: Searches for open PR with branch "night-runner/123"
 has_pr() {
     local issue_number="$1"
-    local count=$(gh pr list -R "$REPO" --search "fixes #$issue_number" --json number | jq length)
+    local count=$(gh pr list -R "$REPO" --head "night-runner/$issue_number" --state open --json number | jq length)
     [[ "$count" -gt 0 ]]
 }
 
@@ -332,7 +332,7 @@ has_pr() {
 # Used by: stage_update_pr() to find which PR to update
 get_pr_number() {
     local issue_number="$1"
-    gh pr list -R "$REPO" --search "fixes #$issue_number" --json number -q '.[0].number'
+    gh pr list -R "$REPO" --head "night-runner/$issue_number" --state open --json number -q '.[0].number'
 }
 
 # Check if PR has new review comments
@@ -341,8 +341,10 @@ get_pr_number() {
 #       only for comments after last commit timestamp
 pr_has_new_comments() {
     local pr_number="$1"
-    local count=$(gh api "repos/$REPO/pulls/$pr_number/comments" 2>/dev/null | jq length)
-    [[ "$count" -gt 0 ]]
+    # Only trigger update when there's a CHANGES_REQUESTED review (human asking for changes)
+    local has_changes_requested=$(gh api "repos/$REPO/pulls/$pr_number/reviews" 2>/dev/null \
+        | jq '[.[] | select(.state == "CHANGES_REQUESTED")] | length > 0')
+    [[ "$has_changes_requested" == "true" ]]
 }
 
 # Check if PR is merged
@@ -610,7 +612,7 @@ stage_plan() {
     local issue_title="$2"
 
     # React to issue to show Night Runner is working on it (👀)
-    gh api -X POST "repos/$REPO/issues/$issue_number/reactions" -f content="eyes" 2>/dev/null || true
+    gh api -X POST "repos/$REPO/issues/$issue_number/reactions" -f content="eyes" > /dev/null 2>&1 || true
 
     log "  Creating plan..."
 
@@ -793,7 +795,7 @@ stage_update_pr() {
         return 1
     fi
 
-    run_claude "$worktree" "/night-runner-update-pr $pr_number" > /dev/null
+    run_claude "$worktree" "/night-runner-update-pr $pr_number --issue $issue_number" > /dev/null
 
     cd "$worktree"
 
@@ -861,7 +863,7 @@ log "Found $COUNT open issues"
 
 if [[ "$COUNT" == "0" ]]; then
     log "No issues to process"
-    exit 0
+    return 0
 fi
 
 # Process each issue
@@ -904,21 +906,21 @@ echo "$ISSUES" | jq -c '.[]' | while read -r issue; do
     if has_pr "$NUMBER"; then
         PR_NUM=$(get_pr_number "$NUMBER")
         if pr_has_new_comments "$PR_NUM"; then
-            stage_update_pr "$NUMBER" "$PR_NUM"
+            stage_update_pr "$NUMBER" "$PR_NUM" || true
         else
             log "  PR exists, no new comments"
         fi
     elif has_lgtm "$NUMBER"; then
-        stage_implement "$NUMBER" "$TITLE"
+        stage_implement "$NUMBER" "$TITLE" || true
     elif has_plan "$NUMBER"; then
         if has_plan_feedback "$NUMBER"; then
             log "  Plan has feedback, updating plan..."
-            stage_plan "$NUMBER" "$TITLE"
+            stage_plan "$NUMBER" "$TITLE" || true
         else
             log "  Plan exists, waiting for LGTM"
         fi
     else
-        stage_plan "$NUMBER" "$TITLE"
+        stage_plan "$NUMBER" "$TITLE" || true
     fi
 
     # Release lock after processing
